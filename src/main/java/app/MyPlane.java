@@ -1,5 +1,7 @@
 package app;
 
+import core.tasks.CircleTask;
+
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
@@ -137,13 +139,22 @@ public class MyPlane extends Plane {
 	
 	@Override
 	public void run() {
-		while(true){
-			fire();
-			try{
-				Thread.sleep(500);
-			}catch(InterruptedException e){
-				e.printStackTrace();
-			}
+		AttackTask attackTask = this.new AttackTask();
+		while (!attackTask.done()){
+			attackTask.action();
+		}
+	}
+
+	class AttackTask extends CircleTask{
+
+		@Override
+		public void action() {
+				MyPlane.this.fire();
+				try {
+					Thread.sleep(500);
+				}catch(InterruptedException e){
+					e.printStackTrace();
+				}
 		}
 	}
 }

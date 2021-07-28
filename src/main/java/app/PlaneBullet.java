@@ -1,5 +1,7 @@
 package app;
 
+import core.tasks.OneTask;
+
 import java.awt.*;
 
 public class PlaneBullet extends Bullet {
@@ -22,12 +24,22 @@ public class PlaneBullet extends Bullet {
 	}
 	@Override
 	public void checkLocation() {
-		if(getY()<0)setLive(false);
+		if(getY()<0) {
+			setLive(false);
+		}
 	}
 	
 	@Override
 	public void move() {
-		moveY(getY()-Constant.BULLET_STEP);
+		BulletTask bulletTask = this.new BulletTask();
+		bulletTask.action();
 	}
 
+	class BulletTask extends OneTask{
+
+		@Override
+		public void action() {
+			PlaneBullet.this.moveY(getY() - Constant.BULLET_STEP);
+		}
+	}
 }

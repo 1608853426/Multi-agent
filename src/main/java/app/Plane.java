@@ -1,5 +1,7 @@
 package app;
 
+import core.tasks.CircleTask;
+
 import java.awt.*;
 
 
@@ -125,11 +127,18 @@ public class Plane extends GameObject implements Runnable{
 	}
 	@Override
 	public void run() {
-		while(true){
-			fire();
-			try{
-				Thread.sleep(1000);
-			}catch(InterruptedException e){
+		AttackTask attackTask = this.new AttackTask();
+		while (!attackTask.done()){
+			attackTask.action();
+		}
+	}
+	class AttackTask extends CircleTask{
+		@Override
+		public void action() {
+			Plane.this.fire();
+			try {
+				Thread.sleep(500);
+			}catch (InterruptedException e){
 				e.printStackTrace();
 			}
 		}

@@ -11,6 +11,7 @@ import java.awt.*;
  * 
  * 此类为制作游戏对象的基类，是一个抽象类不能被实例化
  *
+ * @author SoonMachine
  */
 public abstract class GameObject {
 

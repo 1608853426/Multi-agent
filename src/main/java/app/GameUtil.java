@@ -17,7 +17,7 @@ import java.net.URL;
  *
  */
 public final class GameUtil {
-    // 工具类最好将构造器私有化。
+
     private GameUtil() {
      
     } 
