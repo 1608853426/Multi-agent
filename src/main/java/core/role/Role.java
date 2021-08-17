@@ -1,35 +1,26 @@
 package core.role;
 
+import core.agents.Agent;
+
 import java.util.*;
 
 /**
  * @author SoonMachine
  */
-public class Role {
+public  class Role{
+
+    private static final long serialVersionUID = -6779609408858855669L;
+
+    private HashMap<String,Integer> MQPS = new HashMap<>();
+
     private Integer roleId;
+
     private String roleName;
-    private Map<String,Integer> claim;
-    private List<Object> instance;
 
-    public Role() {
-        instance = new ArrayList<>();
-    }
-
-    public void addClaim(String name,Integer value){
-        this.claim.put(name, value);
-    }
-
-    public void removeClaim(String name){
-        this.claim.remove(name);
-    }
-
-    public List<Object> getInstance() {
-        return instance;
-    }
-
-    public void setInstance(List<Object> instance) {
-        this.instance = instance;
-    }
+    /**
+     * 公共的执行任务的方法
+     */
+    public  void doAssignTask(){};
 
     public Integer getRoleId() {
         return roleId;
@@ -45,5 +36,13 @@ public class Role {
 
     public void setRoleName(String roleName) {
         this.roleName = roleName;
+    }
+
+    public HashMap<String, Integer> getMQPS() {
+        return MQPS;
+    }
+
+    public void setMQPS(HashMap<String, Integer> MQPS) {
+        this.MQPS = MQPS;
     }
 }

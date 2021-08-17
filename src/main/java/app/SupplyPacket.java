@@ -5,7 +5,7 @@ import java.awt.*;
 /**
  * @author SoonMachine
  */
-public class SupplyPacket extends GameObject implements Runnable{
+public class SupplyPacket extends GameRole implements Runnable{
 	private boolean live;
 	public SupplyPacket(Image img) {
 		setImg(img);
@@ -53,4 +53,15 @@ public class SupplyPacket extends GameObject implements Runnable{
 		this.live=live;
 	}
 
+	@Override
+	public void doAssignTask() {
+		while(true){
+			try{
+				Thread.sleep(20000);
+			}catch(InterruptedException e){
+				e.printStackTrace();
+			}
+			live=true;
+		}
+	}
 }

@@ -1,19 +1,32 @@
 package core.message;
 
+import org.apache.activemq.command.ActiveMQMessage;
+
+import javax.jms.Message;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * @author SoonMachine
  */
-public class Message {
+public class AgentMessage extends ActiveMQMessage {
+
+    private String agentName;
 
     private String description;
 
     private Map objMap = new HashMap();
 
-    public Message(String description) {
+    public AgentMessage(String description) {
         this.description = description;
+    }
+
+    public String getAgentName() {
+        return agentName;
+    }
+
+    public void setAgentName(String agentName) {
+        this.agentName = agentName;
     }
 
     public String getDescription() {

@@ -7,24 +7,29 @@ package app;
 
 import core.agents.Agent;
 import core.role.Role;
-import core.role.RoleAssignment;
+import core.role.RoleContainer;
+import core.tasks.AssignTaskInstance;
+import core.tasks.CircleTask;
+import core.tasks.Task;
+import core.tasks.TaskContainer;
+
 
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Optional;
 
 
 /**
  * 游戏主窗口
  * 游戏开始前，关闭输入法
  * w前，s后，a左，d右+shift（可以加速）
+ *
  * @author SoonMachine
  */
-public class MyGameFrame extends Frame implements RoleAssignment {
+public class MyGameFrame extends Frame implements AssignTaskInstance {
 
     /**
      * 飞机图片
@@ -45,7 +50,7 @@ public class MyGameFrame extends Frame implements RoleAssignment {
     /**
      * 操作的飞机
      */
-    private MyPlane plane;
+    private MyPlaneRole plane;
 
     /**
      * 敌机图片
@@ -55,8 +60,9 @@ public class MyGameFrame extends Frame implements RoleAssignment {
     /**
      * 敌机
      */
-    private Plane[] enemies;
+    private PlaneRole[] enemies;
 
+    private static TaskContainer taskContainer;
     /**
      * 用于双缓冲
      */
@@ -83,8 +89,10 @@ public class MyGameFrame extends Frame implements RoleAssignment {
     private Thread supplyThread;
 
 
-    private Agent[] agents;
+
     private static int agentNums;
+
+    private MyAgentContainer agentContainer;
     /**
      * 用于加载图片
      */
@@ -119,63 +127,93 @@ public class MyGameFrame extends Frame implements RoleAssignment {
             }
         });
         addKeyListener(new KeyMonitors());
-        plane = new MyPlane(planeImg, 288, 460);
         supply = new SupplyPacket(supplyImg);
-        enemies = new Plane[6];
-        Role enemyRole = new Role();
-        enemyRole.setRoleName("enemyPlane");
-        List<Object> instance = enemyRole.getInstance();
-        for (int i = 0; i < enemies.length; i++) {
-            enemies[i] = new Plane(armyImages[i]);
-            instance.add(enemies[i]);
-            agentNums ++;
+
+        /**
+         * 任务创建
+         */
+        taskContainer = TaskContainer.getInstance();
+        CircleTask myTask = new CircleTask(100, 0, Task.STATE_READY, "attack");
+        taskContainer.createTask(myTask);
+        CircleTask[] enemyTask = new CircleTask[6];
+        for (int i = 0; i < 6; i++) {
+            enemyTask[i] = new CircleTask(i, 0, Task.STATE_READY, "attack");
+            enemyTask[i].getMQPS().put("attack",1);
+            taskContainer.createTask(enemyTask[i]);
         }
 
-        Role myRole = new Role();
-        myRole.setRoleName("myPlane");
-        List<Object> instance1 = myRole.getInstance();
-        instance1.add(plane);
-        agentNums ++;
 
-        List<Role> roleList = new ArrayList<>();
-        roleList.add(enemyRole);
-        roleList.add(myRole);
+        RoleContainer roleContainer = RoleContainer.getInstance();
+        plane = new MyPlaneRole(planeImg, 288, 460);
+        plane.setRoleId(100);
+        roleContainer.createRoleInstance(plane);
+        agentNums++;
 
-        agents = new Agent[agentNums];
+        enemies = new PlaneRole[6];
+        for (int i = 0; i < enemies.length; i++) {
+            enemies[i] = new PlaneRole(armyImages[i]);
+            enemies[i].setRoleId(i);
+            roleContainer.createRoleInstance(enemies[i]);
+            agentNums++;
+        }
 
-        this.roleAssignment(agents,roleList);
+
+        this.assignTaskInstance(taskContainer, roleContainer);
+
 
 
         paintThread = new PaintThread();
         supplyThread = new Thread(supply);
-    }
 
-    /**
-     * 用于开启线程
-     */
-    public void start() {
-        paintThread.start();
-
-        for (Agent agent : agents){
-            agent.start();
+        agentContainer = new MyAgentContainer();
+        Agent[] agents = new Agent[7];
+        for (int i = 0; i < 6; i++) {
+            agents[i] = new EnemyPlaneAgent(i);
+            agentContainer.createAgent(agents[i]);
         }
+        agents[6] = new Agent(6);
+        agentContainer.createAgent(agents[6]);
+        paintThread.start();
         supplyThread.start();
+
+        agentContainer.assignAgent(taskContainer);
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true){
+                    for (int i = 0; i < 6; i++) {
+                        Optional<Agent> agent = agentContainer.findAgent(1);
+                        if (agent.isPresent()){
+                            EnemyPlaneAgent agent1 = (EnemyPlaneAgent) agent.get();
+                            if (agent1.getAvailable().equals(false)){
+                                agentContainer.assignAgent(taskContainer);
+                            }
+                        }
+                    }
+                }
+            }
+        });
     }
 
     @Override
-    public void roleAssignment(Agent[] agents, List<Role> roles) {
-            int temp = 0;
-            for (Role role : roles){
-                List<Object> instance = role.getInstance();
-                String roleName = role.getRoleName();
-                for (Object o : instance){
-
-                    agents[temp] = new Agent((Runnable) o);
-                    agents[temp].setRoleName(roleName);
-                    temp ++;
-                }
+    public void assignTaskInstance(TaskContainer taskContainer, RoleContainer roleContainer) {
+        for (int i = 0; i < 6; i++) {
+            Optional<Task> task = taskContainer.findTask(i);
+            Role roleInstance = roleContainer.findRoleInstance(i);
+            if (task.isPresent()) {
+                Task task1 = task.get();
+                task1.setRole(roleInstance);
             }
+        }
+
+        Optional<Task> task = taskContainer.findTask(100);
+        task.ifPresent(value -> value.setRole(roleContainer.findRoleInstance(100)));
     }
+
+
+
+
+
 
     /**
      * 内部的一个线程类，用于重画窗口
@@ -212,8 +250,8 @@ public class MyGameFrame extends Frame implements RoleAssignment {
     }
 
     @Override
-    /**
-     * 用于画窗口
+    /*
+      用于画窗口
      */
     public void paint(Graphics g) {
         g.drawImage(bg, 0, 0, null);
@@ -224,12 +262,21 @@ public class MyGameFrame extends Frame implements RoleAssignment {
             plane.bullets[i].drawSelf(g);
         }
 
-        for (Plane value : enemies) {
+        for (PlaneRole value : enemies) {
             value.drawSelf(g);
         }
-        for (Plane enemy : enemies) {
+        for (PlaneRole enemy : enemies) {
             for (int j = 0; j < enemy.bullets.length; j++) {
                 enemy.bullets[j].drawSelf(g);
+            }
+        }
+        for (int i = 0; i < 6; i++) {
+            Optional<Agent> agent = agentContainer.findAgent(i);
+            if (agent.isPresent()){
+                EnemyPlaneAgent enemyPlaneAgent = (EnemyPlaneAgent) agent.get();
+                for (Bullet bullet : enemyPlaneAgent.bullets){
+                    bullet.drawSelf(g);
+                }
             }
         }
         plane.blood.draw(g);
@@ -256,7 +303,7 @@ public class MyGameFrame extends Frame implements RoleAssignment {
      * 用于判断是否发生碰撞
      */
     public void isCollide() {
-        for (Plane enemy : enemies) {
+        for (PlaneRole enemy : enemies) {
             boolean peng = false;
             for (int j = 0; j < plane.bullets.length; j++) {
                 if (plane.bullets[j].isLive() &&
@@ -310,7 +357,6 @@ public class MyGameFrame extends Frame implements RoleAssignment {
         MyGameFrame f = new MyGameFrame();
         f.load();
         f.init();
-        f.start();
     }
 
 }

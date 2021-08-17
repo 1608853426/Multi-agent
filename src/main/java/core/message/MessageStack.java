@@ -7,10 +7,10 @@ import java.util.List;
  * @author SoonMachine
  */
 public class MessageStack {
-    private List<Message> list = new ArrayList();
+    private List<AgentMessage> list = new ArrayList();
     private static final int N = 20;
 
-    public synchronized void push(Message message){
+    public synchronized void push(AgentMessage agentMessage){
         try {
             while (list.size() == N){
                 System.out.println("队列已满，智能体 "
@@ -18,7 +18,7 @@ public class MessageStack {
                 this.wait();
 
             }
-            list.add(message);
+            list.add(agentMessage);
             System.out.println("智能体 " + Thread.currentThread().getName() + "生产");
             this.notifyAll();
         }catch (InterruptedException e){
@@ -26,16 +26,16 @@ public class MessageStack {
         }
     }
 
-    public synchronized Message get(String description){
+    public synchronized AgentMessage get(String description){
         if (this.list.size() == 0){
-            return new Message("队列为空");
+            return new AgentMessage("队列为空");
         }
-        for (Message message : list){
-            if (description.equals(message.getDescription())){
-                return message;
+        for (AgentMessage agentMessage : list){
+            if (description.equals(agentMessage.getDescription())){
+                return agentMessage;
             }
         }
-        return new Message("不存在该消息");
+        return new AgentMessage("不存在该消息");
     }
 
 

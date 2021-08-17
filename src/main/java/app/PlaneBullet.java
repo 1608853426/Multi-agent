@@ -18,7 +18,7 @@ public class PlaneBullet extends Bullet {
 	public void drawSelf(Graphics g) {
 		if(isLive()){
 			g.drawImage(bullet_img, (int)getX(), (int)getY(), null);
-			move();	
+			move();
 			checkLocation();
 		}
 	}
@@ -28,18 +28,10 @@ public class PlaneBullet extends Bullet {
 			setLive(false);
 		}
 	}
-	
+
 	@Override
 	public void move() {
-		BulletTask bulletTask = this.new BulletTask();
-		bulletTask.action();
+		moveY(getY()-Constant.BULLET_STEP);
 	}
 
-	class BulletTask extends OneTask{
-
-		@Override
-		public void action() {
-			PlaneBullet.this.moveY(getY() - Constant.BULLET_STEP);
-		}
-	}
 }

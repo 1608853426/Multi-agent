@@ -5,6 +5,8 @@
  */
 package app;
 
+import core.role.Role;
+
 import java.awt.*;
 
 /**
@@ -13,7 +15,7 @@ import java.awt.*;
  *
  * @author SoonMachine
  */
-public abstract class GameObject {
+public abstract class GameRole extends Role {
 
 	/**
 	 * 图片
@@ -24,6 +26,7 @@ public abstract class GameObject {
 	 * 宽度和高度
 	 */
 	private int width,height;
+
 
     /**
      * 位置
@@ -91,5 +94,7 @@ public abstract class GameObject {
 	public Rectangle getRect(){
 		return new Rectangle((int)x, (int)y, width, height);
 	}
+
+
 	
 }

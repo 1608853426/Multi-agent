@@ -1,62 +1,39 @@
 package core.agents;
 
 
-import app.Plane;
+import core.role.Role;
+import core.tasks.Task;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+
 
 /**
  * @author SoonMachine
  */
-public class Agent extends Thread implements Serializable{
+public class Agent implements Serializable{
 
-
+    private Task task;
+    private Integer AgentId;
     private String roleName;
-
+    private ArrayList<Task> taskArrayList = new ArrayList<>();
     private static final long serialVersionUID = -1555019280735961301L;
 
-    public Agent(Runnable target) {
-        super(target);
+
+    public Agent() {
     }
 
-    public Agent(ThreadGroup group, Runnable target) {
-        super(group, target);
+    public Agent(Integer agentId) {
+        this.AgentId = agentId;
     }
 
-    public Agent(String name) {
-        super(name);
+    public Integer getAgentId() {
+        return AgentId;
     }
 
-    public Agent(ThreadGroup group, String name) {
-        super(group, name);
+    public void setAgentId(Integer agentId) {
+        AgentId = agentId;
     }
-
-    public Agent(Runnable target, String name) {
-        super(target, name);
-    }
-
-    public Agent(ThreadGroup group, Runnable target, String name) {
-        super(group, target, name);
-    }
-
-    public Agent(ThreadGroup group, Runnable target, String name, long stackSize) {
-        super(group, target, name, stackSize);
-    }
-
-    public Agent(ThreadGroup group, Runnable target, String name, long stackSize, boolean inheritThreadLocals) {
-        super(group, target, name, stackSize, inheritThreadLocals);
-    }
-
-    @Override
-    public void run() {
-        super.run();
-    }
-
-    @Override
-    public synchronized void start() {
-        super.start();
-    }
-
 
     public String getRoleName() {
         return roleName;
@@ -65,4 +42,23 @@ public class Agent extends Thread implements Serializable{
     public void setRoleName(String roleName) {
         this.roleName = roleName;
     }
+
+
+    public ArrayList<Task> getTaskArrayList() {
+        return taskArrayList;
+    }
+
+    public void setTaskArrayList(ArrayList<Task> taskArrayList) {
+        this.taskArrayList = taskArrayList;
+    }
+
+    public Task getTask() {
+        return task;
+    }
+
+    public void setTask(Task task) {
+        this.task = task;
+    }
+
+
 }

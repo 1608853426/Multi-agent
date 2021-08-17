@@ -1,7 +1,5 @@
 package core.tasks;
 
-import java.util.Hashtable;
-
 public class SeqTask extends CompositeTask{
 
     private TaskList subBehaviours = new TaskList();
@@ -36,10 +34,10 @@ public class SeqTask extends CompositeTask{
     }
 
     @Override
-    public void action() {
-        for (int i = 0; i < this.subBehaviours.size(); i++) {
-            Task o = (Task) this.subBehaviours.get(i);
-            o.action();
+    public void run() {
+        for (Object subBehaviour : this.subBehaviours) {
+            Task o = (Task) subBehaviour;
+            o.run();
         }
     }
 

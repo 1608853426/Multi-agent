@@ -4,7 +4,7 @@ package app;
 import java.awt.*;
 
 
-public class Bullet extends GameObject {
+public class Bullet extends GameRole {
 	private boolean live=false;
 
 	public Bullet(){

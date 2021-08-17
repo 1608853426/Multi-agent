@@ -46,14 +46,14 @@ public class ParallelTask extends CompositeTask{
     }
 
     @Override
-    public void action() {
+    public void run() {
         ExecutorService ex = Executors.newFixedThreadPool(this.subBehaviours.size());
         for (int i = 0; i < this.subBehaviours.size(); i++) {
             Task o = (Task) subBehaviours.get(i);
             ex.submit(new Runnable() {
                 @Override
                 public void run() {
-                    o.action();
+                    o.run();
                 }
             });
         }

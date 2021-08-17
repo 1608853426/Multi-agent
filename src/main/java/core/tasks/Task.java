@@ -1,13 +1,18 @@
 package core.tasks;
 
 import core.agents.Agent;
+import core.role.NullRole;
+import core.role.Role;
 
 import java.io.Serializable;
+import java.util.HashMap;
 
 /**
  * @author SoonMachine
+ * @description 任务相关接口, 屎山代码
  */
-public abstract class Task implements Serializable {
+public abstract class Task implements Serializable, Runnable{
+
 
     private static final long serialVersionUID = -8947497106385186426L;
 
@@ -27,12 +32,22 @@ public abstract class Task implements Serializable {
     protected CompositeTask parent;
 
 
+    private HashMap<String,Integer> MQPS = new HashMap<>();
+
     private Integer taskId;
     private Integer priority;
     private String status;
     private String target;
 
+    public Role role = new NullRole();
 
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
 
     void setParent(CompositeTask cb) {
         this.parent = cb;
@@ -127,7 +142,8 @@ public abstract class Task implements Serializable {
     /**
      * 用来定义任务需要完成的动作
      */
-    public abstract void action();
+    @Override
+    public abstract void run();
 
     /**
      * 判断任务是否完成的依据
@@ -195,6 +211,15 @@ public abstract class Task implements Serializable {
         }
 
     }
+
+    public HashMap<String, Integer> getMQPS() {
+        return MQPS;
+    }
+
+    public void setMQPS(HashMap<String, Integer> MQPS) {
+        this.MQPS = MQPS;
+    }
+
     protected class RunnableChangedEvent implements Serializable{
 
         private static final long serialVersionUID = -4573919955157069317L;
@@ -220,5 +245,24 @@ public abstract class Task implements Serializable {
         public boolean isUpwards() {
             return this.direction == -1;
         }
+
+    }
+    @Override
+    public int hashCode() {
+        return this.getTaskId().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Task)){
+            return false;
+        }
+
+        Task obj1 = (Task) obj;
+        if (this == obj1){
+            return true;
+        }
+
+        return this.getTaskId().equals(obj1.getTaskId());
     }
 }

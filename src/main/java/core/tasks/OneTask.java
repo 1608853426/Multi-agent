@@ -13,6 +13,11 @@ public abstract class OneTask extends NormalTask{
     }
 
     @Override
+    public void run() {
+        this.role.doAssignTask();
+    }
+
+    @Override
     public boolean done() {
         return true;
     }
