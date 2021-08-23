@@ -18,6 +18,7 @@ public class JmsConsumer {
 
 
     public static List<AgentMessage> receiveMessage() throws JMSException {
+
         //创建连接工厂,按照给定的url地址,采用默认用户名和密码
         ActiveMQConnectionFactory activeMQConnectionFactory = new ActiveMQConnectionFactory(ACTIVEMQ_URL);
 

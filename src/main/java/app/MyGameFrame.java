@@ -20,6 +20,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Optional;
+import java.util.Random;
 
 
 /**
@@ -128,17 +129,16 @@ public class MyGameFrame extends Frame implements AssignTaskInstance {
         });
         addKeyListener(new KeyMonitors());
         supply = new SupplyPacket(supplyImg);
+        Random r = new Random();
 
-        /**
-         * 任务创建
-         */
+
         taskContainer = TaskContainer.getInstance();
         CircleTask myTask = new CircleTask(100, 0, Task.STATE_READY, "attack");
         taskContainer.createTask(myTask);
         CircleTask[] enemyTask = new CircleTask[6];
         for (int i = 0; i < 6; i++) {
             enemyTask[i] = new CircleTask(i, 0, Task.STATE_READY, "attack");
-            enemyTask[i].getMQPS().put("attack",1);
+            enemyTask[i].getMQPS().put("attack",r.nextInt(91) + 10);
             taskContainer.createTask(enemyTask[i]);
         }
 
@@ -153,13 +153,13 @@ public class MyGameFrame extends Frame implements AssignTaskInstance {
         for (int i = 0; i < enemies.length; i++) {
             enemies[i] = new PlaneRole(armyImages[i]);
             enemies[i].setRoleId(i);
+            enemies[i].getCapabilities().put("attack",r.nextInt(91) + 10);
             roleContainer.createRoleInstance(enemies[i]);
             agentNums++;
         }
 
 
-        this.assignTaskInstance(taskContainer, roleContainer);
-
+        MyTaskContainer.getInstance().assignTaskInstance(taskContainer,roleContainer);
 
 
         paintThread = new PaintThread();
@@ -186,14 +186,22 @@ public class MyGameFrame extends Frame implements AssignTaskInstance {
                         if (agent.isPresent()){
                             EnemyPlaneAgent agent1 = (EnemyPlaneAgent) agent.get();
                             if (agent1.getAvailable().equals(false)){
+                                System.out.println("Agent弹药耗尽,触发了角色重新分配");
                                 agentContainer.assignAgent(taskContainer);
                             }
                         }
                     }
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });
+        thread.run();
     }
+
 
     @Override
     public void assignTaskInstance(TaskContainer taskContainer, RoleContainer roleContainer) {

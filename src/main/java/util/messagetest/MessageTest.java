@@ -1,8 +1,8 @@
-package messagetest;
+package util.messagetest;
 
 import core.message.AgentMessage;
 import core.message.MessageStack;
-import messagetest.test.DbUtil;
+import util.messagetest.test.DbUtil;
 
 public class MessageTest {
     static MessageStack messageStack = new MessageStack();

@@ -19,7 +19,13 @@ public class Agent implements Serializable{
     private ArrayList<Task> taskArrayList = new ArrayList<>();
     private static final long serialVersionUID = -1555019280735961301L;
 
+    private String State;
 
+    private static final String WAIT = "Wait";
+    private static final String DEAD = "Dead";
+    private static final String READY = "Ready";
+    private static final String ACTIVE = "Active";
+    private static final String EXECUTE = "Execute";
     public Agent() {
     }
 
@@ -60,5 +66,11 @@ public class Agent implements Serializable{
         this.task = task;
     }
 
+    public String getState() {
+        return State;
+    }
 
+    public void setState(String state) {
+        State = state;
+    }
 }

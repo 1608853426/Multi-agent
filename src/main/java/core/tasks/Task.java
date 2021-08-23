@@ -5,6 +5,7 @@ import core.role.NullRole;
 import core.role.Role;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -30,7 +31,7 @@ public abstract class Task implements Serializable, Runnable{
     protected Task.RunnableChangedEvent myEvent;
     private CompositeTask wrappedParent;
     protected CompositeTask parent;
-
+    private ArrayList<TaskRelationship> relationshipList = new ArrayList<>();
 
     private HashMap<String,Integer> MQPS = new HashMap<>();
 
@@ -137,6 +138,14 @@ public abstract class Task implements Serializable, Runnable{
 
     public void setMyAgent(Agent myAgent) {
         this.myAgent = myAgent;
+    }
+
+    public ArrayList<TaskRelationship> getRelationshipList() {
+        return relationshipList;
+    }
+
+    public void setRelationshipList(ArrayList<TaskRelationship> relationshipList) {
+        this.relationshipList = relationshipList;
     }
 
     /**

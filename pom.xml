@@ -68,7 +68,7 @@
                             <inputSchema>TrackData</inputSchema>
                         </database>
                         <target>
-                            <packageName>messagetest.db</packageName>
+                            <packageName>util.messagetest.db</packageName>
                             <directory>/src/main/java</directory>
                         </target>
                     </generator>

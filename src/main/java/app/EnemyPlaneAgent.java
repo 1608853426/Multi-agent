@@ -8,7 +8,7 @@ import core.agents.Agent;
 public class EnemyPlaneAgent extends Agent implements Runnable {
     PlaneRole role;
     Bullet[] bullets = new Bullet[Constant.DEFAULT_ARMY_BC];
-    Integer bulletsNums = Constant.DEFAULT_PLANE_BC;
+    Integer bulletsNums = Constant.DEFAULT_ARMY_BC;
     private Boolean isAvailable = true;
     public MyAgentContainer agentContainer;
 
@@ -41,10 +41,6 @@ public class EnemyPlaneAgent extends Agent implements Runnable {
                 if (!bullet.isLive()) {
                     bullet.setPosition(role.getX() + 25, role.getY() + 60);
                     bullet.setLive(true);
-                    this.bulletsNums --;
-                    if (bulletsNums <= 0){
-                        this.setAvailable(false);
-                    }
                     break;
                 }
             }
@@ -55,6 +51,10 @@ public class EnemyPlaneAgent extends Agent implements Runnable {
     public void run() {
         while (true) {
             this.fire();
+            this.bulletsNums --;
+            if (bulletsNums <= 0){
+                this.setAvailable(false);
+            }
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {

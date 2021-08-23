@@ -31,7 +31,7 @@ public class PlaneRole extends GameRole implements Runnable {
         setPosition((Math.random() * 6 * 64 + 64), -34);
         setHeight(img.getHeight(null));
         setWidth(img.getWidth(null));
-        this.getMQPS().put("attack",10);
+        this.getCapabilities().put("attack",10);
     }
 
     public PlaneRole(Image img, double x, double y, int bulletins) {
